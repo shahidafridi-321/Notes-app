@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import phoneBookServices from "./services";
 
-export const Phonebook = ({ data }) => {
-	const [persons, setPersons] = useState(data);
+export const Phonebook = () => {
+	const [persons, setPersons] = useState([]);
 	const [searchPerson, setSearchPerson] = useState("");
 	const [newPerson, setNewPerson] = useState({ id: 0, name: "", number: "" });
+
+	useEffect(() => {
+		const getData = async () => {
+			try {
+				const data = await phoneBookServices.getAllData();
+				setPersons(data);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		getData();
+	}, []);
 
 	const handleChange = (e) => {
 		setSearchPerson(e.target.value);
