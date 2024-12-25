@@ -5,6 +5,8 @@ export const Phonebook = () => {
 	const [persons, setPersons] = useState([]);
 	const [searchPerson, setSearchPerson] = useState("");
 	const [newPerson, setNewPerson] = useState({ id: 0, name: "", number: "" });
+	const [error, setError] = useState({ isError: false, message: "" });
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const getData = async () => {
@@ -12,7 +14,9 @@ export const Phonebook = () => {
 				const data = await phoneBookServices.getAllData();
 				setPersons(data);
 			} catch (error) {
-				console.log(error);
+				setError({ ...error, isError: true, message: error });
+			} finally {
+				setLoading(false);
 			}
 		};
 		getData();
@@ -54,11 +58,13 @@ export const Phonebook = () => {
 							person.id === updatedPerson.id ? response : person
 						)
 					);
+					setNewPerson({ id: 0, name: "", number: "" });
+					return;
 				} catch (error) {
-					console.log(error);
+					setError({ ...error, isError: true, message: error });
+				} finally {
+					setLoading(false);
 				}
-				setNewPerson({ id: 0, name: "", number: "" });
-				return;
 			} else return;
 		}
 		try {
@@ -66,7 +72,9 @@ export const Phonebook = () => {
 			setPersons((prev) => [...prev, response]);
 			setNewPerson({ id: 0, name: "", number: "" });
 		} catch (error) {
-			console.log(error);
+			setError({ ...error, isError: true, message: error });
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -81,18 +89,34 @@ export const Phonebook = () => {
 		setNewPerson({ ...newPerson, number: e.target.value });
 	};
 
-	const handleDelete = (id) => {
+	const handleDelete = async (id) => {
 		const confirm = window.confirm(`Do you really want delete this record?`);
 		if (confirm) {
-			setPersons((prev) => prev.filter((person) => person.id !== id));
+			try {
+				const response = await phoneBookServices.deleteEntery(id);
+				setPersons((prev) =>
+					prev.filter((person) => person.id !== response.id)
+				);
+			} catch (error) {
+				setError({ ...error, isError: true, message: error });
+			} finally {
+				setLoading(false);
+			}
 		}
 	};
 
 	const filteredPersons = persons.filter((person) =>
 		person.name.toLowerCase().startsWith(searchPerson.toLowerCase())
 	);
-
-	return (
+	if (loading) {
+		return <p>Loading....</p>;
+	}
+	return error.isError ? (
+		<div>
+			<h2>Some thing when wrong</h2>
+			<p>{error.message}</p>
+		</div>
+	) : (
 		<div>
 			<h1>Phonebook</h1>
 			<div>
