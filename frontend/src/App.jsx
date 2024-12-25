@@ -1,35 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import React from "react";
+import { Phonebook } from "./Phonebook";
 function App() {
-  const [count, setCount] = useState(0)
+	const persons = [
+		{
+			id: "1",
+			name: "shahid",
+			number: "89742748",
+		},
+		{ id: "2", name: "shaheen", number: "89742748" },
+		{ id: "3", name: "kamran", number: "89742748" },
+	];
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	return (
+		<>
+			<Phonebook data={persons} />
+		</>
+	);
 }
 
-export default App
+export default App;
