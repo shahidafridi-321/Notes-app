@@ -19,7 +19,16 @@ const create = async (newPerson) => {
 	}
 };
 
+const update = async (id, updatedPerson) => {
+	try {
+		const response = await axios.put(`${baseURL}/${id}`, updatedPerson);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};
 export default {
 	getAllData,
 	create,
+	update,
 };
