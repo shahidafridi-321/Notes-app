@@ -10,8 +10,16 @@ const getAllData = async () => {
 	}
 };
 
-
+const create = async (newPerson) => {
+	try {
+		const response = await axios.post(baseURL, newPerson);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};
 
 export default {
 	getAllData,
+	create,
 };
