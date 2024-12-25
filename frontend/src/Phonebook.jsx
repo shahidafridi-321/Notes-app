@@ -40,20 +40,33 @@ export const Phonebook = ({ data }) => {
 		setNewPerson({ id: 0, name: "", number: "" });
 	};
 
+	const generateID = () => {
+		return Math.floor(Math.random() * 100000 + persons.length + 1);
+	};
+
 	const handleNameChange = (e) => {
 		setNewPerson({
 			...newPerson,
 			name: e.target.value,
-			id: persons.length + 1,
+			id: generateID(),
 		});
 	};
 
 	const handleNumberChange = (e) => {
 		setNewPerson({ ...newPerson, number: e.target.value });
 	};
+
+	const handleDelete = (id) => {
+		const confirm = window.confirm(`Do you really want delete this record?`);
+		if (confirm) {
+			setPersons((prev) => prev.filter((person) => person.id !== id));
+		}
+	};
+
 	const filteredPersons = persons.filter((person) =>
 		person.name.toLowerCase().startsWith(searchPerson.toLowerCase())
 	);
+
 	return (
 		<div>
 			<h1>Phonebook</h1>
@@ -82,13 +95,21 @@ export const Phonebook = ({ data }) => {
 					<button type="submit">Add</button>
 				</form>
 			</div>
-			<ul>
-				{filteredPersons.map((person) => (
-					<li key={person.id}>
-						{person.name} {person.number}
-					</li>
-				))}
-			</ul>
+			<h2>Numbers</h2>
+			{filteredPersons.length > 0 ? (
+				<ul>
+					{filteredPersons.map((person) => (
+						<li key={person.id}>
+							{person.name} {person.number}{" "}
+							<button type="button" onClick={() => handleDelete(person.id)}>
+								Delete
+							</button>
+						</li>
+					))}
+				</ul>
+			) : (
+				<p>No contact mached</p>
+			)}
 		</div>
 	);
 };
