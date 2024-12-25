@@ -27,8 +27,12 @@ export const Phonebook = () => {
 		if (!newPerson.name || !newPerson.number) {
 			return;
 		}
+		const newPersonLocal = {
+			name: newPerson.name,
+			number: newPerson.number,
+		};
 		const isPersonPresent = persons.find(
-			(person) => person.name === newPerson.name
+			(person) => person.name === newPersonLocal.name
 		);
 		if (isPersonPresent) {
 			const updatedPerson = {
@@ -40,33 +44,36 @@ export const Phonebook = () => {
 				`${isPersonPresent.name} is already in the list . Do you update The number?`
 			);
 			if (confirm) {
-				setPersons((prev) =>
-					prev.map((person) =>
-						person.id == updatedPerson.id ? updatedPerson : person
-					)
-				);
+				try {
+					const response = await phoneBookServices.update(
+						isPersonPresent.id,
+						updatedPerson
+					);
+					setPersons((prev) =>
+						prev.map((person) =>
+							person.id === updatedPerson.id ? response : person
+						)
+					);
+				} catch (error) {
+					console.log(error);
+				}
 				setNewPerson({ id: 0, name: "", number: "" });
 				return;
 			} else return;
 		}
 		try {
-			const response = await phoneBookServices.create(newPerson);
-			setPersons([...persons, response]);
+			const response = await phoneBookServices.create(newPersonLocal);
+			setPersons((prev) => [...prev, response]);
 			setNewPerson({ id: 0, name: "", number: "" });
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
-	const generateID = () => {
-		return Math.floor(Math.random() * 100000 + persons.length + 1);
-	};
-
 	const handleNameChange = (e) => {
 		setNewPerson({
 			...newPerson,
 			name: e.target.value,
-			id: generateID(),
 		});
 	};
 
