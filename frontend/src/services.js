@@ -27,8 +27,18 @@ const update = async (id, updatedPerson) => {
 		return error;
 	}
 };
+
+const deleteEntery = async (id) => {
+	try {
+		const response = await axios.delete(`${baseURL}/${id}`);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};
 export default {
 	getAllData,
 	create,
 	update,
+	deleteEntery,
 };
