@@ -22,7 +22,7 @@ export const Phonebook = () => {
 		setSearchPerson(e.target.value);
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!newPerson.name || !newPerson.number) {
 			return;
@@ -49,8 +49,13 @@ export const Phonebook = () => {
 				return;
 			} else return;
 		}
-		setPersons([...persons, newPerson]);
-		setNewPerson({ id: 0, name: "", number: "" });
+		try {
+			const response = await phoneBookServices.create(newPerson);
+			setPersons([...persons, response]);
+			setNewPerson({ id: 0, name: "", number: "" });
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const generateID = () => {
