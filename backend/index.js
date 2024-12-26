@@ -16,8 +16,10 @@ let persons = [
 	},
 ];
 
+const { error } = require("console");
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 app.get("/", (resquest, response) => {
 	response.send("<h2>Heloo shahid</h2>");
@@ -40,6 +42,32 @@ app.delete("/api/persons/:id", (request, response) => {
 	const id = request.params.id;
 	persons = persons.filter((person) => person.id !== id);
 	response.status(204).end();
+});
+
+const generateID = () => {
+	return String(Math.floor(Math.random() * 10000 + persons.length + 1));
+};
+app.post("/api/persons/", (request, response) => {
+	const body = request.body;
+	if (!body.name || !body.number) {
+		return response.status(400).json({
+			error: "Name or number is missing",
+		});
+	}
+	const isPersonPresent = persons.find((person) => person.name == body.name);
+
+	if (isPersonPresent) {
+		return response.status(400).json({
+			error: "This person is already in list",
+		});
+	}
+	const newPerson = {
+		name: body.name,
+		number: body.number,
+		id: generateID(),
+	};
+	persons = persons.concat(newPerson);
+	response.json(newPerson);
 });
 
 const PORT = 3001;
