@@ -16,7 +16,6 @@ let persons = [
 	},
 ];
 
-const { error } = require("console");
 const express = require("express");
 const app = express();
 app.use(express.json());
@@ -47,6 +46,7 @@ app.delete("/api/persons/:id", (request, response) => {
 const generateID = () => {
 	return String(Math.floor(Math.random() * 10000 + persons.length + 1));
 };
+
 app.post("/api/persons/", (request, response) => {
 	const body = request.body;
 	if (!body.name || !body.number) {
@@ -69,7 +69,30 @@ app.post("/api/persons/", (request, response) => {
 	persons = persons.concat(newPerson);
 	response.json(newPerson);
 });
-
+app.put("/api/persons/:id", (request, response) => {
+	const id = request.params.id;
+	const body = request.body;
+	if (!body.name || !body.number) {
+		return response.status(400).json({
+			error: "Name or number is missing",
+		});
+	}
+	const isPersonPresent = persons.find((person) => person.id === id);
+	if (isPersonPresent) {
+		const updatedPerson = {
+			id: id,
+			name: body.name,
+			number: body.number,
+		};
+		persons = persons.map((person) =>
+			person.id === id ? updatedPerson : person
+		);
+		return response.json(updatedPerson);
+	}
+	return response.status(400).json({
+		error: "No match found , create now person",
+	});
+});
 const PORT = 3001;
 app.listen(PORT, () => {
 	console.log(`server running on port ${PORT}`);
