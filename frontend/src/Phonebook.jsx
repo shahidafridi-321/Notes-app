@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import phoneBookServices from "./services";
-
+import { PhonebookList } from "./PhonebookList";
+import { Loading } from "./Loading";
+import { Error } from "./Error";
+import { Button } from "./Button";
 export const Phonebook = () => {
 	const [persons, setPersons] = useState([]);
 	const [searchPerson, setSearchPerson] = useState("");
@@ -109,13 +112,10 @@ export const Phonebook = () => {
 		person.name.toLowerCase().startsWith(searchPerson.toLowerCase())
 	);
 	if (loading) {
-		return <p>Loading....</p>;
+		return <Loading />;
 	}
 	return error.isError ? (
-		<div>
-			<h2>Some thing when wrong</h2>
-			<p>{error.message}</p>
-		</div>
+		<Error message={error.message} />
 	) : (
 		<div>
 			<h1>Phonebook</h1>
@@ -141,21 +141,12 @@ export const Phonebook = () => {
 							value={newPerson.number}
 						/>
 					</div>
-					<button type="submit">Add</button>
+					<Button type="submit" text="Add" />
 				</form>
 			</div>
 			<h2>Numbers</h2>
 			{filteredPersons.length > 0 ? (
-				<ul>
-					{filteredPersons.map((person) => (
-						<li key={person.id}>
-							{person.name} {person.number}{" "}
-							<button type="button" onClick={() => handleDelete(person.id)}>
-								Delete
-							</button>
-						</li>
-					))}
-				</ul>
+				<PhonebookList items={filteredPersons} handleDelete={handleDelete} />
 			) : (
 				<p>No contact mached</p>
 			)}
