@@ -22,7 +22,6 @@ const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
 
-const path = require("path");
 
 app.use(express.static("dist"));
 
@@ -94,10 +93,6 @@ app.put("/api/persons/:id", (request, response) => {
 	return response.status(400).json({
 		error: "No match found , create now person",
 	});
-});
-
-app.get("*", (req, res) => {
-	res.sendFile(path.resolve(__dirname, "dist", "index.html"));
 });
 
 const PORT = 3001;

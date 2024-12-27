@@ -96,9 +96,9 @@ export const Phonebook = () => {
 		const confirm = window.confirm(`Do you really want delete this record?`);
 		if (confirm) {
 			try {
-				const response = await phoneBookServices.deleteEntery(id);
+				await phoneBookServices.deleteEntery(id);
 				setPersons((prev) =>
-					prev.filter((person) => person.id !== response.id)
+					prev.filter((person) => person.id !== id)
 				);
 			} catch (error) {
 				setError({ ...error, isError: true, message: error });
