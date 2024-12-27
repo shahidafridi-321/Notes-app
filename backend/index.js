@@ -22,8 +22,9 @@ const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
 
-app.use(express.static("dist"));
+const path = require("path");
 
+app.use(express.static("dist"));
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
@@ -94,6 +95,11 @@ app.put("/api/persons/:id", (request, response) => {
 		error: "No match found , create now person",
 	});
 });
+
+app.get("*", (req, res) => {
+	res.sendFile(path.resolve(__dirname, "dist", "index.html"));
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
 	console.log(`server running on port ${PORT}`);
