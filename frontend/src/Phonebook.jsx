@@ -15,13 +15,9 @@ export const Phonebook = () => {
 		const getData = async () => {
 			try {
 				const data = await phoneBookServices.getAllData();
-				setPersons(prev=> [...prev,data]);
+				setPersons(data);
 			} catch (error) {
-				setError({
-					...error,
-					isError: true,
-					message: error.message || "An unknown error occurred",
-				});
+				setError({ ...error, isError: true, message: error });
 			} finally {
 				setLoading(false);
 			}
@@ -35,17 +31,24 @@ export const Phonebook = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!newPerson.name || !newPerson.number) return;
-
-		const newPersonLocal = { name: newPerson.name, number: newPerson.number };
-
+		if (!newPerson.name || !newPerson.number) {
+			return;
+		}
+		const newPersonLocal = {
+			name: newPerson.name,
+			number: newPerson.number,
+		};
 		const isPersonPresent = persons.find(
 			(person) => person.name === newPersonLocal.name
 		);
 		if (isPersonPresent) {
-			const updatedPerson = { id: isPersonPresent.id, ...newPersonLocal };
+			const updatedPerson = {
+				id: isPersonPresent.id,
+				name: newPerson.name,
+				number: newPerson.number,
+			};
 			const confirm = window.confirm(
-				`${isPersonPresent.name} is already in the list. Do you want to update the number?`
+				`${isPersonPresent.name} is already in the list . Do you update The number?`
 			);
 			if (confirm) {
 				try {
@@ -61,24 +64,20 @@ export const Phonebook = () => {
 					setNewPerson({ id: 0, name: "", number: "" });
 					return;
 				} catch (error) {
-					setError({
-						isError: true,
-						message: error.message || "Failed to update contact",
-					});
+					setError({ ...error, isError: true, message: error });
+				} finally {
+					setLoading(false);
 				}
-			}
-			return;
+			} else return;
 		}
-
 		try {
 			const response = await phoneBookServices.create(newPersonLocal);
 			setPersons((prev) => [...prev, response]);
 			setNewPerson({ id: 0, name: "", number: "" });
 		} catch (error) {
-			setError({
-				isError: true,
-				message: error.message || "Failed to add contact",
-			});
+			setError({ ...error, isError: true, message: error });
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -97,14 +96,12 @@ export const Phonebook = () => {
 		const confirm = window.confirm(`Do you really want delete this record?`);
 		if (confirm) {
 			try {
-				await phoneBookServices.deleteEntery(id);
-				setPersons((prev) => prev.filter((person) => person.id !== id));
+				const response = await phoneBookServices.deleteEntery(id);
+				setPersons((prev) =>
+					prev.filter((person) => person.id !== response.id)
+				);
 			} catch (error) {
-				setError({
-					...error,
-					isError: true,
-					message: error.message || "An unknown error occurred",
-				});
+				setError({ ...error, isError: true, message: error });
 			} finally {
 				setLoading(false);
 			}

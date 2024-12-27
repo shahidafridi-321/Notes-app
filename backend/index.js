@@ -18,15 +18,12 @@ let persons = [
 
 const express = require("express");
 const morgan = require("morgan");
-const path = require("path");
 const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
 
-app.use(express.static(path.join(__dirname, "dist")));
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
+app.use(express.static("dist"));
+
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
