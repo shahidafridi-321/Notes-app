@@ -21,10 +21,10 @@ const morgan = require("morgan");
 const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use(express.static("dist"));
 
-app.get("/", (resquest, response) => {
-	response.send("<h2>Heloo shahid</h2>");
+app.use(express.static(path.join(__dirname, "dist")));
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.get("/api/persons", (request, response) => {
