@@ -15,7 +15,7 @@ export const Phonebook = () => {
 		const getData = async () => {
 			try {
 				const data = await phoneBookServices.getAllData();
-				setPersons(data);
+				setPersons(prev=> [...prev,data]);
 			} catch (error) {
 				setError({ ...error, isError: true, message: error });
 			} finally {
