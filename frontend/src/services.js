@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL = "/api/persons";
+const baseURL = "https://phonebook-beta-inky.vercel.app/api/persons";
 
 const getAllData = async () => {
 	try {
