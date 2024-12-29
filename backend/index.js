@@ -22,7 +22,13 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use(cors());
+
+const corsOptions = {
+	origin: "http://localhost:5173", // Update with your frontend URL
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	credentials: true,
+};
+app.use(cors(corsOptions));
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
