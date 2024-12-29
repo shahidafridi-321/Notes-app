@@ -7,7 +7,11 @@ export const PhonebookList = ({ items, handleDelete }) => {
 				{items.map((person) => (
 					<li key={person.id}>
 						{person.name} {person.number}{" "}
-						<Button type="button" text="Delete" onClick={handleDelete} />
+						<Button
+							type="button"
+							text="Delete"
+							onClick={() => handleDelete(person.id)}
+						/>
 					</li>
 				))}
 			</ul>

@@ -1,34 +1,24 @@
-let persons = [
-	{
-		id: "3",
-		name: "Dan Abramov",
-		number: "878887788",
-	},
-	{
-		name: "Mary Poppendieck",
-		number: "39-23-6423122",
-		id: "4",
-	},
-	{
-		id: "6371",
-		name: "khan",
-		number: "888",
-	},
-];
-
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+
+let persons = [
+	{ id: "3", name: "Dan Abramov", number: "878887788" },
+	{ name: "Mary Poppendieck", number: "39-23-6423122", id: "4" },
+	{ id: "6371", name: "khan", number: "888" },
+];
+
 const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
 
 const corsOptions = {
-	origin: "http://localhost:5173", // Update with your frontend URL
+	origin: "http://localhost:5173",
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 	credentials: true,
 };
 app.use(cors(corsOptions));
+app.options("*", cors());
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
@@ -45,8 +35,12 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
 	const id = request.params.id;
-	persons = persons.filter((person) => person.id !== id);
-	response.status(204).end();
+	const isPersonPresent = persons.find((person) => person.id == id);
+	if (isPersonPresent) {
+		persons = persons.filter((person) => person.id !== id);
+		return response.json(isPersonPresent);
+	}
+	response.status(404).end();
 });
 
 const generateID = () => {
@@ -64,7 +58,7 @@ app.post("/api/persons/", (request, response) => {
 
 	if (isPersonPresent) {
 		return response.status(400).json({
-			error: "This person is already in list",
+			error: "This person is already in the list",
 		});
 	}
 	const newPerson = {
@@ -75,6 +69,7 @@ app.post("/api/persons/", (request, response) => {
 	persons = persons.concat(newPerson);
 	response.json(newPerson);
 });
+
 app.put("/api/persons/:id", (request, response) => {
 	const id = request.params.id;
 	const body = request.body;
@@ -96,11 +91,11 @@ app.put("/api/persons/:id", (request, response) => {
 		return response.json(updatedPerson);
 	}
 	return response.status(400).json({
-		error: "No match found , create now person",
+		error: "No match found, create new person",
 	});
 });
 
 const PORT = 3001;
 app.listen(PORT, () => {
-	console.log(`server running on port ${PORT}`);
+	console.log(`Server running on port ${PORT}`);
 });

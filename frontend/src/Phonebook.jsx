@@ -4,6 +4,7 @@ import { PhonebookList } from "./PhonebookList";
 import { Loading } from "./Loading";
 import { Error } from "./Error";
 import { Button } from "./Button";
+
 export const Phonebook = () => {
 	const [persons, setPersons] = useState([]);
 	const [searchPerson, setSearchPerson] = useState("");
@@ -17,7 +18,7 @@ export const Phonebook = () => {
 				const data = await phoneBookServices.getAllData();
 				setPersons(data);
 			} catch (error) {
-				setError({ ...error, isError: true, message: error });
+				setError({ ...error, isError: true, message: error.message });
 			} finally {
 				setLoading(false);
 			}
@@ -25,30 +26,19 @@ export const Phonebook = () => {
 		getData();
 	}, []);
 
-	const handleChange = (e) => {
-		setSearchPerson(e.target.value);
-	};
+	const handleChange = (e) => setSearchPerson(e.target.value);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!newPerson.name || !newPerson.number) {
-			return;
-		}
-		const newPersonLocal = {
-			name: newPerson.name,
-			number: newPerson.number,
-		};
+		if (!newPerson.name || !newPerson.number) return;
+
 		const isPersonPresent = persons.find(
-			(person) => person.name === newPersonLocal.name
+			(person) => person.name === newPerson.name
 		);
 		if (isPersonPresent) {
-			const updatedPerson = {
-				id: isPersonPresent.id,
-				name: newPerson.name,
-				number: newPerson.number,
-			};
+			const updatedPerson = { ...newPerson, id: isPersonPresent.id };
 			const confirm = window.confirm(
-				`${isPersonPresent.name} is already in the list . Do you update The number?`
+				`${isPersonPresent.name} is already in the list. Do you want to update their number?`
 			);
 			if (confirm) {
 				try {
@@ -64,46 +54,27 @@ export const Phonebook = () => {
 					setNewPerson({ id: 0, name: "", number: "" });
 					return;
 				} catch (error) {
-					setError({ ...error, isError: true, message: error });
-				} finally {
-					setLoading(false);
+					setError({ ...error, isError: true, message: error.message });
 				}
-			} else return;
+			}
+		} else {
+			try {
+				const response = await phoneBookServices.create(newPerson);
+				setPersons((prev) => [...prev, response]);
+				setNewPerson({ id: 0, name: "", number: "" });
+			} catch (error) {
+				setError({ ...error, isError: true, message: error.message });
+			}
 		}
-		try {
-			const response = await phoneBookServices.create(newPersonLocal);
-			setPersons((prev) => [...prev, response]);
-			setNewPerson({ id: 0, name: "", number: "" });
-		} catch (error) {
-			setError({ ...error, isError: true, message: error });
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const handleNameChange = (e) => {
-		setNewPerson({
-			...newPerson,
-			name: e.target.value,
-		});
-	};
-
-	const handleNumberChange = (e) => {
-		setNewPerson({ ...newPerson, number: e.target.value });
 	};
 
 	const handleDelete = async (id) => {
-		const confirm = window.confirm(`Do you really want delete this record?`);
-		if (confirm) {
+		if (window.confirm("Do you want to delete this record?")) {
 			try {
 				await phoneBookServices.deleteEntery(id);
-				setPersons((prev) =>
-					prev.filter((person) => person.id !== id)
-				);
+				setPersons((prev) => prev.filter((person) => person.id !== id));
 			} catch (error) {
-				setError({ ...error, isError: true, message: error });
-			} finally {
-				setLoading(false);
+				setError({ ...error, isError: true, message: error.message });
 			}
 		}
 	};
@@ -111,12 +82,11 @@ export const Phonebook = () => {
 	const filteredPersons = persons.filter((person) =>
 		person.name.toLowerCase().startsWith(searchPerson.toLowerCase())
 	);
-	if (loading) {
-		return <Loading />;
-	}
-	return error.isError ? (
-		<Error message={error.message} />
-	) : (
+
+	if (loading) return <Loading />;
+	if (error.isError) return <Error message={error.message} />;
+
+	return (
 		<div>
 			<h1>Phonebook</h1>
 			<div>
@@ -129,15 +99,19 @@ export const Phonebook = () => {
 						Name{" "}
 						<input
 							type="text"
-							onChange={handleNameChange}
+							onChange={(e) =>
+								setNewPerson({ ...newPerson, name: e.target.value })
+							}
 							value={newPerson.name}
 						/>
 					</div>
 					<div>
 						Number{" "}
 						<input
-							type="number"
-							onChange={handleNumberChange}
+							type="text"
+							onChange={(e) =>
+								setNewPerson({ ...newPerson, number: e.target.value })
+							}
 							value={newPerson.number}
 						/>
 					</div>
@@ -145,10 +119,10 @@ export const Phonebook = () => {
 				</form>
 			</div>
 			<h2>Numbers</h2>
-			{filteredPersons.length > 0 ? (
+			{filteredPersons.length ? (
 				<PhonebookList items={filteredPersons} handleDelete={handleDelete} />
 			) : (
-				<p>No contact mached</p>
+				<p>No contacts matched</p>
 			)}
 		</div>
 	);

@@ -37,6 +37,7 @@ const deleteEntery = async (id) => {
 		return error;
 	}
 };
+
 export default {
 	getAllData,
 	create,
