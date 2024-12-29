@@ -13,9 +13,8 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 const corsOptions = {
-  origin: "https://phonebook-frontend-chi.vercel.app",  // Allow only this domain
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,  // Allow credentials (cookies, authorization headers)
+	origin: "https://phonebook-frontend-chi.vercel.app", // Allow only this domain
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 };
 
 // Apply CORS settings globally
