@@ -11,7 +11,14 @@ let persons = [
 const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use(cors());
+
+const corsOptions = {
+	origin: "https://notes-app-tau-ebon-55.vercel.app/",
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	credentials: true,
+};
+app.use(cors(corsOptions));
+app.options("*", cors());
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
