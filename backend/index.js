@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 const corsOptions = {
-	origin: "*",
+	origin: "https://notes-app-tau-ebon-55.vercel.app",
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 	credentials: true,
 };
