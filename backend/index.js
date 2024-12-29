@@ -11,14 +11,7 @@ let persons = [
 const app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
-
-const corsOptions = {
-	origin: "http://localhost:5173",
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	credentials: true,
-};
-app.use(cors(corsOptions));
-app.options("*", cors());
+app.use(cors());
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
