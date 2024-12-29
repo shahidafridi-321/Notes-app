@@ -13,12 +13,16 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 const corsOptions = {
-	origin: "https://phonebook-frontend-chi.vercel.app",
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	credentials: true,
+  origin: "https://phonebook-frontend-chi.vercel.app",  // Allow only this domain
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,  // Allow credentials (cookies, authorization headers)
 };
+
+// Apply CORS settings globally
 app.use(cors(corsOptions));
-app.options("*", cors());
+
+// Handle OPTIONS request for preflight
+app.options("*", cors(corsOptions));
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {

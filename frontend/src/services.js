@@ -4,7 +4,7 @@ const baseURL =
 
 const getAllData = async () => {
 	try {
-		const response = await axios.get(baseURL);
+		const response = await axios.get(baseURL, { withCredentials: true });
 		return response.data;
 	} catch (error) {
 		return error;
