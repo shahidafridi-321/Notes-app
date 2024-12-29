@@ -9,19 +9,10 @@ let persons = [
 ];
 
 const app = express();
+
 app.use(express.json());
+app.use(cors());
 app.use(morgan("tiny"));
-
-const corsOptions = {
-	origin: "https://phonebook-frontend-chi.vercel.app", // Allow only this domain
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-};
-
-// Apply CORS settings globally
-app.use(cors(corsOptions));
-
-// Handle OPTIONS request for preflight
-app.options("*", cors(corsOptions));
 
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
