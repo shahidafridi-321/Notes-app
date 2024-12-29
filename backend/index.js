@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 const corsOptions = {
-	origin: "*",
+	origin: "https://phonebook-frontend-chi.vercel.app",
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 	credentials: true,
 };
