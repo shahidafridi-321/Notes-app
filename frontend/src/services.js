@@ -1,5 +1,8 @@
 import axios from "axios";
-const baseURL = "https://phonebook-backend-xi.vercel.app/api/persons";
+const baseURL =
+	import.meta.env.MODE === "development"
+		? "/api/persons" // Local requests will be proxied to http://localhost:3001/api
+		: "https://phonebook-backend-xi.vercel.app/api/persons"; // Production URL
 
 const getAllData = async () => {
 	try {
