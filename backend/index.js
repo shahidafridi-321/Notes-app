@@ -14,6 +14,12 @@ app.use(express.json());
 app.use(cors({ origin: "https://phonebook-sa.netlify.app" }));
 app.use(morgan("tiny"));
 
+app.get("/", (request, response) => {
+	response.send(
+		"<a href='https://phonebook-backend-xi.vercel.app/api/persons'>Go to API</a>"
+	);
+});
+
 app.get("/api/persons", (request, response) => {
 	if (!persons) {
 		response.status(404).end();
